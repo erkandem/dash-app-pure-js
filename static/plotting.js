@@ -225,6 +225,7 @@ function defaultLayout() {
       'showgrid': false,
       'zeroline': false,
       'ticklen': 3,
+      'fixedrange': true
     },
     'yaxis': {
       'autorange': true,
@@ -232,7 +233,8 @@ function defaultLayout() {
       'type': 'linear',
       'zeroline': false,
       'hoverformat': '.2f',
-      'domain': [0.05, 0.98]
+      'domain': [0.05, 0.98],
+      'fixedrange': true
     }
   }
 }
@@ -258,7 +260,11 @@ function atmIvolChartactory(symbol, data, target) {
   layout['tickvals'] = xValues;
   //layout['yaxis']['title'] = {text: '% p.a.'};
 
-  var config = {displayModeBar: false};
+  var config = {
+    displayModeBar: false,
+    dragMode: false,
+    scrollZoom: false,
+  };
 
   target.textContent = "";
 
