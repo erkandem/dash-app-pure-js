@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/png" href="static/favicon.ico"/>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.47.4/plotly.min.js"
+            integrity="sha256-H/OgTJu16926oS2asyDpBQkSsZym43jAaWRoCBoRQeI="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/grid.css" type="text/css">
+
+    <style>
+        .module {
+        }
+    </style>
+</head>
+
+<body>
+<div  class="container">
+<!--    Page level Header -->
+</div>
+
+<div class="dashboard-body final-pagelevel-wrapper">
+    <!-- section header -->
+    <div class="header-wrapper">
+        <div class="dash-header">
+            <div class="dash-logo-div hmod dash-header-first">
+                <a id="dashboard-logo-link" href="#">
+                    <img id="dash-logo-img" src="static/logo.svg" alt="logo">
+                </a>
+            </div>
+
+            <div class="hmod dash-header-second">
+                <button id="unify-color-scales" style="display: none">
+                    Unify colorscales
+                </button>
+                <div id="zmax-zmin-values" style="display: none"></div>
+            </div>
+            <div class="dash-title hmod dash-header-third">
+                <div>
+                    ETF Options Report - at-the-money implied volatility
+                </div>
+            </div>
+
+            <div id="date-header" class="dash-date hmod dash-header-fourth"> </div>
+            <div class="dash-print hmod dash-header-fifth">
+                <div><i class="fas fa-print fa-1x" id="dash-print-button"></i></div>
+            </div>
+
+        </div>
+    </div>
+    <!-- core -->
+    <div class="db-page grid">
+        <div id="dash-grid-1" class="module">1</div>
+        <div id="dash-grid-2" class="module">2</div>
+        <div id="dash-grid-3" class="module">3</div>
+        <div id="dash-grid-4" class="module">4</div>
+        <div id="dash-grid-5" class="module">5</div>
+        <div id="dash-grid-6" class="module">6</div>
+        <div id="dash-grid-7" class="module">7</div>
+        <div id="dash-grid-8" class="module">8</div>
+        <div id="dash-grid-9" class="module">9</div>
+        <div id="dash-grid-10" class="module">10</div>
+        <div id="dash-grid-11" class="module">11</div>
+        <div id="dash-grid-12" class="module">12</div>
+        <div id="dash-grid-13" class="module">13</div>
+        <div id="dash-grid-14" class="module">14</div>
+        <div id="dash-grid-15" class="module">15</div>
+        <div id="dash-grid-16" class="module">16</div>
+    </div>
+
+    <!-- section footer -->
+    <div class="'dashboard-footer">
+        <div class="dash-disclaimer">
+            THE MATERIALS ON THE REPORT ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. THE WEBSITE DOES NOT REPRESENT OR WARRANT THAT MATERIALS IN OUR WEBSITES ARE ACCURATE, COMPLETE, RELIABLE, CURRENT, OR ERROR-FREE. IN NO EVENT SHALL THE REPORT BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY OTHER DAMAGES OF ANY KIND, INCLUDING BUT NOT LIMITED TO LOSS OF USE, LOSS OF PROFITS, WHETHER IN AN ACTION IN CONTRACT, TORT (INCLUDING BUT NOT LIMITED TO NEGLIGENCE), OR OTHERWISE, ARISING OUT OF OR IN ANY WAY CONNECTED WITH THE USE OF THE MATERIALS CONTAINED IN, OR ACCESSED THROUGH THE REPORT.
+        </div>
+        <div class="dash-copyright">
+            All rights reserved. Terms and Conditions of Service apply. Copyright 2020 - volsurf.com
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <hr>
+</div>
+<div class="container">
+<!-- Page level footer -->
+</div>
+
+<div id="client-auth-header" style="display: none;">
+    {{client_auth_header}}
+</div>
+
+<script src="static/plotting.js"></script>
+
+</body>
+</html>
