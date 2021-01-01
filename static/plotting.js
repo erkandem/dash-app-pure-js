@@ -65,7 +65,7 @@ function loadAuthHeader(){
   )
 }
 
-function tmIvolQueryParams(symbol){
+function atmIvolQueryParams(symbol){
   var params = new URLSearchParams()
   params.append("symbol", symbol);
   params.append("tte", "1m");
@@ -85,7 +85,7 @@ function atmIvolXhrQuery(symbolAndTarget) {
 
   // remote query
   var xhr = new XMLHttpRequest();
-  var url = baseUrl + atmIvolUri + "?" + tmIvolQueryParams(symbol);
+  var url = baseUrl + atmIvolUri + "?" + atmIvolQueryParams(symbol);
   xhr.open('GET', url);
   xhr.setRequestHeader(authHeader.name, authHeader.value)
   xhr.send();
@@ -97,7 +97,7 @@ function atmIvolXhrQuery(symbolAndTarget) {
     } else {
       // processing (aka callback hell)
       data = JSON.parse(xhr.responseText);
-      atmIvolChartactory(symbol, data, target);
+      atmIvolChartFactory(symbol, data, target);
     }
   }
 }
@@ -118,7 +118,7 @@ function simpleXhrFactory(target) {
   }
 }
 
-var defaultImpliedVolatlityData = [
+var defaultImpliedVolatilityData = [
   {
     "dt": "2020-11-30",
     "value": 0.173243970128056
@@ -239,8 +239,10 @@ function defaultLayout() {
   }
 }
 
-function atmIvolChartactory(symbol, data, target) {
+function atmIvolChartFactory(symbol, data, target) {
   var formatted = prepareTimeSeries(data)
+
+  //actual plotting
   var xValues = formatted.dt;
   var yValues = formatted.value;
   var trace = [{
