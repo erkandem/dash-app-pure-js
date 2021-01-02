@@ -1,21 +1,8 @@
-var etfSymbols = [
-  "dia",
-  "eem",
-  "efa",
-  "ewj",
-  "qqq",
-  "ewz",
-  "fez",
-  "xle",
-  "fxi",
-  "gdx",
-  "gdxj",
-  "gld",
-  "slv",
-  "gld",
-  "ief",
-  "spy"
-];
+var storage = {
+  rawdata: {},
+  formatted: {}
+}
+var xhrCounter = 0;
 
 // Get the data from the API
 var baseUrl = "https://api.volsurf.com/";
@@ -24,21 +11,21 @@ var atmIvolUri = "ivol/atm";
 var calendarIvolUri = "ivol/calendar";
 var riskReversalIvolUri = "ivol/risk-reversal";
 var pricesIntradayUri = 'prices/intraday';
+var pricesEodContiUri = 'prices/eod/conti';
 var authHeader = loadAuthHeader()
 
 
-var plotConfigs = [
+var rowFirst = [
   {
     target: document.getElementById("dash-grid-0"),
     plotter: atmIvolPlotter,
     query: {
       uri: atmIvolUri,
       params: {
-        symbol: 'spy',
+        symbol: 'cl',
         tte: '1m',
         dminus: 365
       },
-      symbol: 'spy'
     }
   },
   {
@@ -47,11 +34,10 @@ var plotConfigs = [
     query: {
       uri: riskReversalIvolUri,
       params: {
-        symbol: 'spy',
+        symbol: 'cl',
         tte: '1m',
         dminus: 365
       },
-      symbol: 'spy'
     }
   },
   {
@@ -60,27 +46,193 @@ var plotConfigs = [
     query: {
       uri: calendarIvolUri,
       params: {
-        symbol: 'spy',
+        symbol: 'cl',
         tte: '1m',
         dminus: 365
       },
-      symbol: 'spy'
     }
   },
   {
     target: document.getElementById("dash-grid-3"),
-    plotter: priceEodPlotter,
+    plotter: pricesEodContiPlotter,
     query: {
-      uri: pricesIntradayUri,
+      uri: pricesEodContiUri,
       params: {
-        symbol: 'spy',
+        symbol: 'cl',
         iunit: 'day',
         interval: 1,
         dminus: 365
       },
-      symbol: 'spy'
     }
   }
+]
+var rowSecond = [
+  {
+    target: document.getElementById("dash-grid-4"),
+    plotter: atmIvolPlotter,
+    query: {
+      uri: atmIvolUri,
+      params: {
+        symbol: 'b',
+        ust: 'fut',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-5"),
+    plotter: riskReversalPlotter,
+    query: {
+      uri: riskReversalIvolUri,
+      params: {
+        symbol: 'b',
+                ust: 'fut',
+
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-6"),
+    plotter: calendarPlotter,
+    query: {
+      uri: calendarIvolUri,
+      params: {
+        symbol: 'b',
+                ust: 'fut',
+        tte: '1m',
+        dminus: 365
+      }
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-7"),
+    plotter: pricesEodContiPlotter,
+    query: {
+      uri: pricesEodContiUri,
+      params: {
+        symbol: 'b',
+        iunit: 'day',
+        interval: 1,
+        dminus: 365
+      }
+    }
+  }
+]
+var rowThird = [
+  {
+    target: document.getElementById("dash-grid-8"),
+    plotter: atmIvolPlotter,
+    query: {
+      uri: atmIvolUri,
+      params: {
+        symbol: 'ho',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-9"),
+    plotter: riskReversalPlotter,
+    query: {
+      uri: riskReversalIvolUri,
+      params: {
+        symbol: 'ho',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-10"),
+    plotter: calendarPlotter,
+    query: {
+      uri: calendarIvolUri,
+      params: {
+        symbol: 'ho',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-11"),
+    plotter: pricesEodContiPlotter,
+    query: {
+      uri: pricesEodContiUri,
+      params: {
+        symbol: 'ho',
+        iunit: 'day',
+        interval: 1,
+        dminus: 365
+      },
+    }
+  }
+]
+var rowFourth = [
+  {
+    target: document.getElementById("dash-grid-12"),
+    plotter: atmIvolPlotter,
+    query: {
+      uri: atmIvolUri,
+      params: {
+        symbol: 'rb',
+        ust: 'fut',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-13"),
+    plotter: riskReversalPlotter,
+    query: {
+      uri: riskReversalIvolUri,
+      params: {
+        symbol: 'rb',
+        ust: 'fut',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-14"),
+    plotter: calendarPlotter,
+    query: {
+      uri: calendarIvolUri,
+      params: {
+        symbol: 'rb',
+        ust: 'fut',
+        tte: '1m',
+        dminus: 365
+      },
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-15"),
+    plotter: pricesEodContiPlotter,
+    query: {
+      uri: pricesEodContiUri,
+      params: {
+        symbol: 'rb',
+        ust: 'fut',
+        iunit: 'day',
+        interval: 1,
+        dminus: 365
+      }
+    }
+  }
+]
+
+var plotConfigs = [
+  ...rowFirst,
+  ...rowSecond,
+  ...rowThird,
+  ...rowFourth
 ]
 
 function loadAuthHeader() {
@@ -103,7 +255,15 @@ function composeQueryFromParams(queryParams) {
   return params.toString()
 }
 
+function isDocumentReady () {
+  if (xhrCounter === 15) {
+      window.status = 'ready';
+    console.log('is ready (' + xhrCounter.toString() + ')')
+  } else {
+    console.log('not ready (' + xhrCounter.toString() + ')')
+  }
 
+}
 function plotController(queryObject) {
   // remote query
   var xhr = new XMLHttpRequest();
@@ -112,92 +272,19 @@ function plotController(queryObject) {
   xhr.setRequestHeader(authHeader.name, authHeader.value)
   xhr.send();
   var data = [{}];
+  xhrCounter = xhrCounter + 1;
   xhr.onload = function () {
     if (xhr.status !== 200) {
-      console.log('could ot fetch' + url);
-      target.textContent = "XHR failed";
+      console.log('could not fetch ' + url);
     } else {
       data = JSON.parse(xhr.responseText);
+      storage.rawdata[url] = data;
       queryObject.plotter(queryObject.query.params.symbol, data, queryObject.target);
     }
+    isDocumentReady()
   }
 }
 
-
-var defaultImpliedVolatilityData = [
-  {
-    "dt": "2020-11-30",
-    "value": 0.173243970128056
-  },
-  {
-    "dt": "2020-12-01",
-    "value": 0.174087290502077
-  },
-  {
-    "dt": "2020-12-02",
-    "value": 0.170085741484049
-  },
-  {
-    "dt": "2020-12-03",
-    "value": 0.168794126979577
-  },
-  {
-    "dt": "2020-12-04",
-    "value": 0.153877620534567
-  },
-  {
-    "dt": "2020-12-07",
-    "value": 0.162508141717327
-  },
-  {
-    "dt": "2020-12-08",
-    "value": 0.155979307738347
-  },
-  {
-    "dt": "2020-12-09",
-    "value": 0.171631901764618
-  },
-  {
-    "dt": "2020-12-10",
-    "value": 0.168564879983046
-  },
-  {
-    "dt": "2020-12-11",
-    "value": 0.171534692385804
-  },
-  {
-    "dt": "2020-12-14",
-    "value": 0.192823964008308
-  },
-  {
-    "dt": "2020-12-15",
-    "value": 0.168494229578856
-  },
-  {
-    "dt": "2020-12-16",
-    "value": 0.162972372560976
-  },
-  {
-    "dt": "2020-12-17",
-    "value": 0.156798168948195
-  },
-  {
-    "dt": "2020-12-18",
-    "value": 0.157628327761397
-  },
-  {
-    "dt": "2020-12-21",
-    "value": 0.19040652746625
-  },
-  {
-    "dt": "2020-12-22",
-    "value": 0.179764166650674
-  },
-  {
-    "dt": "2020-12-24",
-    "value": 0.152150380490322
-  }
-]
 
 function prepareTimeSeries(timeSeries, xKey = 'dt', yKey = 'value') {
   var idx = 0;
@@ -211,7 +298,7 @@ function prepareTimeSeries(timeSeries, xKey = 'dt', yKey = 'value') {
   return formatted
 }
 
-function defaultConfig() {
+function defaultPlotOptions() {
   return {
     displayModeBar: false,
     dragMode: false,
@@ -268,20 +355,20 @@ function atmIvolPlotter(symbol, data, target) {
   var layout = defaultLayout();
   layout['title'] = {text: symbol.toUpperCase() + ' atm'}
   layout['yaxis']['tickformat'] = '.0%';
+  layout['yaxis']['hoverformat'] = '.2f';
 
   target.textContent = "";
   Plotly.plot(
     target,
     trace,
     layout,
-    defaultConfig()
+    defaultPlotOptions()
   );
 }
 
 function riskReversalPlotter(symbol, data, target) {
   var formatted = prepareTimeSeries(data)
   var range = getNormalizedRange(formatted.value);
-  console.log(range)
   var trace = [{
     x: formatted.dt,
     y: formatted.value,
@@ -296,20 +383,20 @@ function riskReversalPlotter(symbol, data, target) {
   layout['yaxis']['range'] = range;
   layout['yaxis']['autorange'] = false;
   layout['yaxis']['tickformat'] = '.0%';
+  layout['yaxis']['hoverformat'] = '.2f';
 
   target.textContent = "";
   Plotly.plot(
     target,
     trace,
     layout,
-    defaultConfig()
+    defaultPlotOptions()
   );
 }
 
 function calendarPlotter(symbol, data, target) {
   var formatted = prepareTimeSeries(data)
   var range = getNormalizedRange(formatted.value);
-  console.log(range)
 
   var trace = [{
     x: formatted.dt,
@@ -325,19 +412,19 @@ function calendarPlotter(symbol, data, target) {
   layout['yaxis']['range'] = range;
   layout['yaxis']['autorange'] = false;
   layout['yaxis']['tickformat'] = '.0%';
+  layout['yaxis']['hoverformat'] = '.2f';
 
-  console.log(layout.yaxis)
   target.textContent = "";
   Plotly.plot(
     target,
     trace,
     layout,
-    defaultConfig()
+    defaultPlotOptions()
   );
 }
 
 
-function priceEodPlotter(symbol, data, target) {
+function pricesEodPlotter(symbol, data, target) {
   var slimData = data.map(function (row) {
     return {dt: row.dt, value: row.close}
   });
@@ -358,8 +445,11 @@ function priceEodPlotter(symbol, data, target) {
     target,
     trace,
     layout,
-    defaultConfig()
+    defaultPlotOptions()
   );
+}
+function pricesEodContiPlotter(symbol, data, target) {
+  pricesEodPlotter(symbol, data, target)
 }
 
 function getMax(array) {
