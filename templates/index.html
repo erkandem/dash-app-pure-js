@@ -3,19 +3,36 @@
 <head>
     <link rel="shortcut icon" type="image/png" href="static/favicon.ico"/>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Energy implied volatility dashboard</title>
 
-    <title>implied volatility dashboard for selected ETFs</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.47.4/plotly.min.js"
-            integrity="sha256-H/OgTJu16926oS2asyDpBQkSsZym43jAaWRoCBoRQeI="
-            crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="static/grid.css" type="text/css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+        integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+        crossorigin="anonymous"
+    />
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.47.4/plotly.min.js"
+        integrity="sha256-H/OgTJu16926oS2asyDpBQkSsZym43jAaWRoCBoRQeI="
+        crossorigin="anonymous"
+    ></script>
+    <!---
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"
+        integrity="sha512-Qlv6VSKh1gDKGoJbnyA5RMXYcvnpIqhO++MhIM2fStMcGT9i2T//tSwYFlcyoRRDcDZ+TYHpH8azBBCyhpSeqw=="
+        crossorigin="anonymous">
+    </script>
+    -->
 
-    <style>
-        .module {
-        }
-    </style>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/solid.css" integrity="sha384-rdyFrfAIC05c5ph7BKz3l5NG5yEottvO/DQ0dCrwD8gzeQDjYBHNr1ucUpQuljos" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css" integrity="sha384-u5J7JghGz0qUrmEsWzBQkfvc8nK3fUT7DCaQzNQ+q4oEXhGSx+P2OqjWsfIRB8QT" crossorigin="anonymous">
+    <link
+        rel="stylesheet"
+        href="static/grid.css"
+        type="text/css"
+    >
+
 </head>
 
 <body>
@@ -41,19 +58,20 @@
             </div>
             <div class="dash-title hmod dash-header-third">
                 <div>
-                    ETF Options Report - atm implied volatility
+                    Energy Options Report
                 </div>
             </div>
 
             <div id="date-header" class="dash-date hmod dash-header-fourth"> </div>
             <div class="dash-print hmod dash-header-fifth">
-                <div><i class="fas fa-print fa-1x" id="dash-print-button"></i></div>
+                <div onclick="window.print()"><i class="fas fa-print fa-1x" id="dash-print-button"></i></div>
             </div>
 
         </div>
     </div>
     <!-- core -->
     <div class="db-page grid">
+        <div id="dash-grid-0" class="module"><img src="static/preview.png"></div>
         <div id="dash-grid-1" class="module"><img src="static/preview.png"></div>
         <div id="dash-grid-2" class="module"><img src="static/preview.png"></div>
         <div id="dash-grid-3" class="module"><img src="static/preview.png"></div>
@@ -69,11 +87,10 @@
         <div id="dash-grid-13" class="module"><img src="static/preview.png"></div>
         <div id="dash-grid-14" class="module"><img src="static/preview.png"></div>
         <div id="dash-grid-15" class="module"><img src="static/preview.png"></div>
-        <div id="dash-grid-16" class="module"><img src="static/preview.png"></div>
     </div>
 
     <!-- section footer -->
-    <div class="'dashboard-footer">
+    <div class="dashboard-footer">
         <div class="dash-disclaimer">
             THE MATERIALS ON THE REPORT ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. THE WEBSITE DOES NOT REPRESENT OR WARRANT THAT MATERIALS IN OUR WEBSITES ARE ACCURATE, COMPLETE, RELIABLE, CURRENT, OR ERROR-FREE. IN NO EVENT SHALL THE REPORT BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY OTHER DAMAGES OF ANY KIND, INCLUDING BUT NOT LIMITED TO LOSS OF USE, LOSS OF PROFITS, WHETHER IN AN ACTION IN CONTRACT, TORT (INCLUDING BUT NOT LIMITED TO NEGLIGENCE), OR OTHERWISE, ARISING OUT OF OR IN ANY WAY CONNECTED WITH THE USE OF THE MATERIALS CONTAINED IN, OR ACCESSED THROUGH THE REPORT.
         </div>
@@ -84,7 +101,6 @@
 </div>
 
 <div class="container">
-    <hr>
 </div>
 <div class="container">
 <!-- Page level footer -->
