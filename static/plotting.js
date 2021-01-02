@@ -17,45 +17,73 @@ var etfSymbols = [
   "spy"
 ];
 
-var modulesElements = [
-  document.getElementById("dash-grid-1"),
-  document.getElementById("dash-grid-2"),
-  document.getElementById("dash-grid-3"),
-  document.getElementById("dash-grid-4"),
-  document.getElementById("dash-grid-5"),
-  document.getElementById("dash-grid-6"),
-  document.getElementById("dash-grid-7"),
-  document.getElementById("dash-grid-8"),
-  document.getElementById("dash-grid-9"),
-  document.getElementById("dash-grid-10"),
-  document.getElementById("dash-grid-11"),
-  document.getElementById("dash-grid-12"),
-  document.getElementById("dash-grid-13"),
-  document.getElementById("dash-grid-14"),
-  document.getElementById("dash-grid-15"),
-  document.getElementById("dash-grid-16")
-];
+// Get the data from the API
+var baseUrl = "https://api.volsurf.com/";
+var heartbeatUri = "heartbeat"
+var atmIvolUri = "ivol/atm";
+var calendarIvolUri = "ivol/calendar";
+var riskReversalIvolUri = "ivol/risk-reversal";
+var pricesIntradayUri = 'prices/intraday';
+var authHeader = loadAuthHeader()
 
-var moduleSymbolMapping = [
-  {target: modulesElements[0], symbol: etfSymbols[0]},
-  {target: modulesElements[1], symbol: etfSymbols[1]},
-  {target: modulesElements[2], symbol: etfSymbols[2]},
-  {target: modulesElements[3], symbol: etfSymbols[3]},
-  {target: modulesElements[4], symbol: etfSymbols[4]},
-  {target: modulesElements[5], symbol: etfSymbols[5]},
-  {target: modulesElements[6], symbol: etfSymbols[6]},
-  {target: modulesElements[7], symbol: etfSymbols[7]},
-  {target: modulesElements[8], symbol: etfSymbols[8]},
-  {target: modulesElements[9], symbol: etfSymbols[9]},
-  {target: modulesElements[10], symbol: etfSymbols[10]},
-  {target: modulesElements[11], symbol: etfSymbols[11]},
-  {target: modulesElements[12], symbol: etfSymbols[12]},
-  {target: modulesElements[13], symbol: etfSymbols[13]},
-  {target: modulesElements[14], symbol: etfSymbols[14]},
-  {target: modulesElements[15], symbol: etfSymbols[15]},
+
+var plotConfigs = [
+  {
+    target: document.getElementById("dash-grid-0"),
+    plotter: atmIvolPlotter,
+    query: {
+      uri: atmIvolUri,
+      params: {
+        symbol: 'spy',
+        tte: '1m',
+        dminus: 365
+      },
+      symbol: 'spy'
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-1"),
+    plotter: riskReversalPlotter,
+    query: {
+      uri: riskReversalIvolUri,
+      params: {
+        symbol: 'spy',
+        tte: '1m',
+        dminus: 365
+      },
+      symbol: 'spy'
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-2"),
+    plotter: calendarPlotter,
+    query: {
+      uri: calendarIvolUri,
+      params: {
+        symbol: 'spy',
+        tte: '1m',
+        dminus: 365
+      },
+      symbol: 'spy'
+    }
+  },
+  {
+    target: document.getElementById("dash-grid-3"),
+    plotter: priceEodPlotter,
+    query: {
+      uri: pricesIntradayUri,
+      params: {
+        symbol: 'spy',
+        iunit: 'day',
+        interval: 1,
+        dminus: 365
+      },
+      symbol: 'spy'
+    }
+  }
 ]
 
-function loadAuthHeader(){
+function loadAuthHeader() {
   return JSON.parse(
     document.getElementById(
       "client-auth-header"
@@ -65,58 +93,36 @@ function loadAuthHeader(){
   )
 }
 
-function atmIvolQueryParams(symbol){
+function composeQueryFromParams(queryParams) {
   var params = new URLSearchParams()
-  params.append("symbol", symbol);
-  params.append("tte", "1m");
-  params.append("dminus", 365);
+  var keys = Object.keys(queryParams);
+  var i = 0;
+  for (i = 0; i < keys.length; i++) {
+    params.append(keys[i], queryParams[keys[i]]);
+  }
   return params.toString()
 }
-// Get the data from the API
-var baseUrl = "https://api.volsurf.com/";
-var heartbeatUri = "heartbeat"
-var atmIvolUri = "ivol/atm";
-var authHeader = loadAuthHeader()
 
-function atmIvolXhrQuery(symbolAndTarget) {
-  // unpack input object
-  var symbol = symbolAndTarget.symbol
-  var target = symbolAndTarget.target
 
+function plotController(queryObject) {
   // remote query
   var xhr = new XMLHttpRequest();
-  var url = baseUrl + atmIvolUri + "?" + atmIvolQueryParams(symbol);
+  var url = baseUrl + queryObject.query.uri + "?" + composeQueryFromParams(queryObject.query.params);
   xhr.open('GET', url);
   xhr.setRequestHeader(authHeader.name, authHeader.value)
   xhr.send();
   var data = [{}];
   xhr.onload = function () {
     if (xhr.status !== 200) {
-      console.log('could ot fetch' + url)
-      target.textContent = "XHR failed"
+      console.log('could ot fetch' + url);
+      target.textContent = "XHR failed";
     } else {
-      // processing (aka callback hell)
       data = JSON.parse(xhr.responseText);
-      atmIvolChartFactory(symbol, data, target);
+      queryObject.plotter(queryObject.query.params.symbol, data, queryObject.target);
     }
   }
 }
 
-function simpleXhrFactory(target) {
-  var xhr = new XMLHttpRequest();
-  var url = baseUrl + heartbeatUri
-  xhr.open('GET', url);
-  xhr.send();
-  xhr.onload = function () {
-    if (xhr.status !== 200) {
-      console.log('could ot fetch' + url)
-      target.textContent = "XHR failed"
-    } else {
-      data = xhr.responseText;
-      target.textContent = data
-    }
-  }
-}
 
 var defaultImpliedVolatilityData = [
   {
@@ -205,16 +211,26 @@ function prepareTimeSeries(timeSeries, xKey = 'dt', yKey = 'value') {
   return formatted
 }
 
+function defaultConfig() {
+  return {
+    displayModeBar: false,
+    dragMode: false,
+    scrollZoom: false,
+  };
+}
+
 function defaultLayout() {
   return {
+    'height': 170,
+    'width': 260,
     'autosize': true,
     'font': {'size': 12},
     'margin': {
       'pad': 0,
-      'r': 40,
+      'r': 30,
       't': 30,
       'b': 42,
-      'l': 30
+      'l': 40
     },
     'showlegend': false,
     'titlefont': {'size': 12},
@@ -232,57 +248,149 @@ function defaultLayout() {
       'showline': true,
       'type': 'linear',
       'zeroline': false,
-      'hoverformat': '.2f',
       'domain': [0.05, 0.98],
       'fixedrange': true
     }
   }
 }
 
-function atmIvolChartFactory(symbol, data, target) {
+function atmIvolPlotter(symbol, data, target) {
   var formatted = prepareTimeSeries(data)
-
-  //actual plotting
-  var xValues = formatted.dt;
-  var yValues = formatted.value;
   var trace = [{
-    x: xValues,
-    y: yValues,
+    x: formatted.dt,
+    y: formatted.value,
     line: {
       'color': 'rgb(53, 83, 255)',
       'width': 0.5,
     },
     mode: 'lines',
   }];
-
   var layout = defaultLayout();
-  layout['height'] = 170;
-  layout['width'] = 260;
-  layout['title'] = {text: symbol.toUpperCase()}
-  layout['tickvals'] = xValues;
-  //layout['yaxis']['title'] = {text: '% p.a.'};
-
-  var config = {
-    displayModeBar: false,
-    dragMode: false,
-    scrollZoom: false,
-  };
+  layout['title'] = {text: symbol.toUpperCase() + ' atm'}
+  layout['yaxis']['tickformat'] = '.0%';
 
   target.textContent = "";
-
   Plotly.plot(
     target,
     trace,
     layout,
-    config
+    defaultConfig()
   );
 }
+
+function riskReversalPlotter(symbol, data, target) {
+  var formatted = prepareTimeSeries(data)
+  var range = getNormalizedRange(formatted.value);
+  console.log(range)
+  var trace = [{
+    x: formatted.dt,
+    y: formatted.value,
+    line: {
+      'color': 'rgb(53, 83, 255)',
+      'width': 0.5,
+    },
+    mode: 'lines',
+  }];
+  var layout = defaultLayout();
+  layout['title'] = {text: symbol.toUpperCase() + ' riskreversal'}
+  layout['yaxis']['range'] = range;
+  layout['yaxis']['autorange'] = false;
+  layout['yaxis']['tickformat'] = '.0%';
+
+  target.textContent = "";
+  Plotly.plot(
+    target,
+    trace,
+    layout,
+    defaultConfig()
+  );
+}
+
+function calendarPlotter(symbol, data, target) {
+  var formatted = prepareTimeSeries(data)
+  var range = getNormalizedRange(formatted.value);
+  console.log(range)
+
+  var trace = [{
+    x: formatted.dt,
+    y: formatted.value,
+    line: {
+      'color': 'rgb(53, 83, 255)',
+      'width': 0.5,
+    },
+    mode: 'lines',
+  }];
+  var layout = defaultLayout();
+  layout['title'] = {text: symbol.toUpperCase() + ' calendar'}
+  layout['yaxis']['range'] = range;
+  layout['yaxis']['autorange'] = false;
+  layout['yaxis']['tickformat'] = '.0%';
+
+  console.log(layout.yaxis)
+  target.textContent = "";
+  Plotly.plot(
+    target,
+    trace,
+    layout,
+    defaultConfig()
+  );
+}
+
+
+function priceEodPlotter(symbol, data, target) {
+  var slimData = data.map(function (row) {
+    return {dt: row.dt, value: row.close}
+  });
+  var formatted = prepareTimeSeries(slimData)
+  var trace = [{
+    x: formatted.dt,
+    y: formatted.value,
+    line: {
+      'color': 'rgb(53, 83, 255)',
+      'width': 0.5,
+    },
+    mode: 'lines',
+  }];
+  var layout = defaultLayout();
+  layout['title'] = {text: symbol.toUpperCase() + ' close'}
+  target.textContent = "";
+  Plotly.plot(
+    target,
+    trace,
+    layout,
+    defaultConfig()
+  );
+}
+
+function getMax(array) {
+  return Math.max(...array)
+}
+
+function getMin(array) {
+  return Math.min(...array)
+}
+
+function getMinMax(array) {
+  return {
+    minValue: getMin(array),
+    maxValue: getMax(array)
+  }
+}
+
+function getNormalizedRange(array) {
+  var minMaxObject = getMinMax(array);
+  var absMax = Math.max(
+    Math.abs(minMaxObject.minValue),
+    Math.abs(minMaxObject.maxValue)
+  );
+  return [-1 * absMax, absMax]
+}
+
 function setCurrentDate() {
   const today = new Date();
-  const options = {year: 'numeric', month: 'numeric', day: 'numeric' };
+  const options = {year: 'numeric', month: 'numeric', day: 'numeric'};
   document.getElementById("date-header").textContent = today.toLocaleDateString('de-CH', options);
 }
 
-
-moduleSymbolMapping.map(atmIvolXhrQuery);
+plotConfigs.map(plotController);
 setCurrentDate()
