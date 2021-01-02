@@ -355,7 +355,7 @@ function atmIvolPlotter(symbol, data, target) {
   var layout = defaultLayout();
   layout['title'] = {text: symbol.toUpperCase() + ' atm'}
   layout['yaxis']['tickformat'] = '.0%';
-  layout['yaxis']['hoverformat'] = '.2f';
+  layout['yaxis']['hoverformat'] = '.2%';
 
   target.textContent = "";
   Plotly.plot(
@@ -383,7 +383,7 @@ function riskReversalPlotter(symbol, data, target) {
   layout['yaxis']['range'] = range;
   layout['yaxis']['autorange'] = false;
   layout['yaxis']['tickformat'] = '.0%';
-  layout['yaxis']['hoverformat'] = '.2f';
+  layout['yaxis']['hoverformat'] = '.2%';
 
   target.textContent = "";
   Plotly.plot(
@@ -412,7 +412,7 @@ function calendarPlotter(symbol, data, target) {
   layout['yaxis']['range'] = range;
   layout['yaxis']['autorange'] = false;
   layout['yaxis']['tickformat'] = '.0%';
-  layout['yaxis']['hoverformat'] = '.2f';
+  layout['yaxis']['hoverformat'] = '.2%';
 
   target.textContent = "";
   Plotly.plot(
