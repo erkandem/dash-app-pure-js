@@ -193,7 +193,7 @@ body {
 
 /*[3] print settings */
 @media print {
-    @page {size: landscape}
+    @page {size: A4 landscape;}
 
     .dash-disclaimer {
         line-height: 1;
